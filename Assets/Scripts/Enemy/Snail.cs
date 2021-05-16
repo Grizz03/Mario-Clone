@@ -62,9 +62,12 @@ public class Snail : MonoBehaviour
 
         Collider2D topHit = Physics2D.OverlapCircle(top_Collision.position, 0.2f, playerLayer);
 
-        if(topHit != null){
-            if(topHit.gameObject.tag == "Player"){
-                if (!stunned){
+        if (topHit != null)
+        {
+            if (topHit.gameObject.tag == "Player")
+            {
+                if (!stunned)
+                {
                     topHit.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(topHit.gameObject.GetComponent<Rigidbody2D>().velocity.x, 7f);
 
                     canMove = false;
@@ -77,6 +80,38 @@ public class Snail : MonoBehaviour
                 }
             }
         }
+
+        //When stunned is true, move shell Left or Right
+        if (leftHit)
+        {
+            if (leftHit.collider.gameObject.tag == "Player")
+            {
+                if (!stunned)
+                {
+                    // APPLY DAMAGE TO PLAYER
+                }
+                else
+                {
+                    myBody.velocity = new Vector2(10f, myBody.velocity.y);
+                }
+            }
+        }
+
+        if (rightHit)
+        {
+            if (rightHit.collider.gameObject.tag == "Player")
+            {
+                if (!stunned)
+                {
+                    // APPLY DAMAGE TO PLAYER
+                }
+                else
+                {
+                    myBody.velocity = new Vector2(-10f, myBody.velocity.y);
+                }
+            }
+        }
+
 
         // If we don't detect collision
         if (!Physics2D.Raycast(down_Collision.position, Vector2.down, 0.1f))
