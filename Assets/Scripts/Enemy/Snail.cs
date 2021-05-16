@@ -56,15 +56,17 @@ public class Snail : MonoBehaviour
 
     void CheckCollision()
     {
-
+        // Raycasting for collisions around snail
         RaycastHit2D leftHit = Physics2D.Raycast(left_Collision.position, Vector2.left, 0.1f, playerLayer);
         RaycastHit2D rightHit = Physics2D.Raycast(right_Collision.position, Vector2.right, 0.1f, playerLayer);
 
         Collider2D topHit = Physics2D.OverlapCircle(top_Collision.position, 0.2f, playerLayer);
 
+
+        // When jumping on top of snail will stun it(change animation) and player will also jump up
         if (topHit != null)
         {
-            if (topHit.gameObject.tag == "Player")
+            if (topHit.gameObject.tag == MyTags.PLAYER_TAG)
             {
                 if (!stunned)
                 {
@@ -76,15 +78,20 @@ public class Snail : MonoBehaviour
                     animator.Play("Stunned");
                     stunned = true;
 
-                    //Beetle Code Goes Here
+                    // Beetle Code
+                    if (tag == MyTags.BEETLE_TAG)
+                    {
+                        animator.Play("Beetle_Stunned");
+                        StartCoroutine(Dead(0.5f));
+                    }
                 }
             }
         }
 
-        //When stunned is true, move shell Left or Right
+        // When stunned is true, move shell Left or Right
         if (leftHit)
         {
-            if (leftHit.collider.gameObject.tag == "Player")
+            if (leftHit.collider.gameObject.tag == MyTags.PLAYER_TAG)
             {
                 if (!stunned)
                 {
@@ -92,14 +99,18 @@ public class Snail : MonoBehaviour
                 }
                 else
                 {
-                    myBody.velocity = new Vector2(10f, myBody.velocity.y);
+                    if (tag != MyTags.BEETLE_TAG)
+                    {
+                        myBody.velocity = new Vector2(10f, myBody.velocity.y);
+                        StartCoroutine(Dead(3f));
+                    }
                 }
             }
         }
 
         if (rightHit)
         {
-            if (rightHit.collider.gameObject.tag == "Player")
+            if (rightHit.collider.gameObject.tag == MyTags.PLAYER_TAG)
             {
                 if (!stunned)
                 {
@@ -107,7 +118,11 @@ public class Snail : MonoBehaviour
                 }
                 else
                 {
-                    myBody.velocity = new Vector2(-10f, myBody.velocity.y);
+                    if (tag != MyTags.BEETLE_TAG)
+                    {
+                        myBody.velocity = new Vector2(-10f, myBody.velocity.y);
+                        StartCoroutine(Dead(3f));
+                    }
                 }
             }
         }
@@ -140,6 +155,10 @@ public class Snail : MonoBehaviour
         transform.localScale = tempScale;
     }
 
-
+    IEnumerator Dead(float timer)
+    {
+        yield return new WaitForSeconds(timer);
+        gameObject.SetActive(false);
+    }
 
 }
